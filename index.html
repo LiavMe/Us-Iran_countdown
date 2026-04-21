@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ספירה לאחור · פקיעת הפסקת האש · 22.04.2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;700&family=JetBrains+Mono:wght@300;400;500;700&family=Noto+Naskh+Arabic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ───────────────────────────────────────────────────────────
+   DESIGN TOKENS
+   ─────────────────────────────────────────────────────────── */
+:root {
+    /* Ink — warm near-black stack */
+    --ink-950: #070706;
+    --ink-900: #0c0b0a;
+    --ink-850: #121110;
+    --ink-800: #1a1815;
+    --ink-700: #24221d;
+    --ink-600: #2e2c26;
+
+    /* Bone — warm off-white stack (reads like aged paper against ink) */
+    --bone-50:  #fdfaf3;
+    --bone-100: #ede6d6;
+    --bone-200: #d6cfbd;
+    --bone-300: #a8a091;
+    --bone-400: #7a7264;
+    --bone-500: #544e43;
+
+    /* Decisive accent */
+    --crimson:        #d43c2e;
+    --crimson-bright: #ef4d3c;
+    --crimson-glow:   rgba(217, 61, 46, 0.35);
+
+    /* Flag palette (sourced precisely) */
+    --us-red:   #b22234;
+    --us-blue:  #3c3b6e;
+    --us-white: #ffffff;
+    --ir-green: #239f40;
+    --ir-gold:  #f4c430;
+
+    /* Typography */
+    --font-display: 'Frank Ruhl Libre', 'Georgia', serif;
+    --font-ui:      'Heebo', 'Segoe UI', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+    --font-arabic:  'Noto Naskh Arabic', 'Frank Ruhl Libre', serif;
+
+    /* Easing */
+    --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+/* ───────────────────────────────────────────────────────────
+   RESET
+   ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+    background: var(--ink-950);
+    color: var(--bone-100);
+    font-family: var(--font-ui);
+    line-height: 1.45;
+    overflow-x: hidden;
+    position: relative;
+    background-image:
+        radial-gradient(ellipse 90% 70% at 50% 15%, rgba(217, 61, 46, 0.09) 0%, transparent 55%),
+        radial-gradient(ellipse 100% 60% at 50% 100%, rgba(8, 12, 20, 0.5) 0%, transparent 65%),
+        linear-gradient(180deg, #0a0908 0%, #050504 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ───────────────────────────────────────────────────────────
+   BACKGROUND ATMOSPHERE
+   ─────────────────────────────────────────────────────────── */
+.bg-grid {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 1;
+    background-image:
+        linear-gradient(rgba(235, 228, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(235, 228, 212, 0.03) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 85% 65% at 50% 50%, black 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 85% 65% at 50% 50%, black 30%, transparent 100%);
+}
+
+.bg-grain {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 2;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+.bg-vignette {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 3;
+    background: radial-gradient(ellipse 120% 120% at 50% 50%, transparent 55%, rgba(0,0,0,0.65) 100%);
+}
+
+.bg-scanline {
+    position: fixed;
+    left: 0; right: 0;
+    height: 140px; top: -140px;
+    pointer-events: none; z-index: 4;
+    background: linear-gradient(180deg, transparent 0%, rgba(217, 61, 46, 0.035) 45%, rgba(217, 61, 46, 0.055) 50%, rgba(217, 61, 46, 0.035) 55%, transparent 100%);
+    animation: scan 14s linear infinite;
+}
+
+@keyframes scan {
+    0%   { top: -140px; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 100vh; opacity: 0; }
+}
+
+/* Edge accent lines */
+.edge-line {
+    position: fixed;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(217, 61, 46, 0.5) 20%, rgba(217, 61, 46, 0.5) 80%, transparent 100%);
+    z-index: 6;
+    pointer-events: none;
+}
+.edge-line--top    { top: 58px; }
+.edge-line--bottom { bottom: 72px; }
+
+/* ───────────────────────────────────────────────────────────
+   BRIEFING BAR (TOP)
+   ─────────────────────────────────────────────────────────── */
+.briefing-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 36px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bone-300);
+    background: linear-gradient(180deg, rgba(10, 9, 8, 0.92), rgba(10, 9, 8, 0.5) 70%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(235, 228, 212, 0.05);
+}
+
+.briefing-bar__section {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    white-space: nowrap;
+}
+
+.tag-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--crimson-bright);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+}
+.tag-live__dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--crimson-bright);
+    box-shadow: 0 0 12px var(--crimson-glow);
+    animation: pulse-red 1.3s ease-in-out infinite;
+}
+@keyframes pulse-red {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px var(--crimson-glow); }
+    50%      { opacity: 0.35; transform: scale(0.7); box-shadow: 0 0 22px var(--crimson-glow); }
+}
+
+.briefing-bar__meta     { color: var(--bone-300); font-weight: 500; }
+.briefing-bar__ref      { color: var(--bone-200); font-weight: 600; letter-spacing: 0.2em; }
+.briefing-bar__clock    { color: var(--bone-100); font-weight: 600; font-variant-numeric: tabular-nums; }
+.briefing-bar__zone     { color: var(--bone-400); font-size: 10px; }
+
+/* ───────────────────────────────────────────────────────────
+   STAGE
+   ─────────────────────────────────────────────────────────── */
+.stage {
+    position: relative;
+    z-index: 5;
+    min-height: 100vh;
+    padding: 112px 40px 132px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.theater {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(640px, 2.6fr) minmax(240px, 1fr);
+    align-items: stretch;
+    gap: 56px;
+    width: 100%;
+    max-width: 1680px;
+}
+
+/* ───────────────────────────────────────────────────────────
+   DOSSIER (flag + identity card)
+   ─────────────────────────────────────────────────────────── */
+.dossier {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    opacity: 0;
+    animation: fade-up 1s var(--ease-out) forwards;
+}
+.dossier--iran { animation-delay: 0.28s; }
+.dossier--us   { animation-delay: 0.42s; }
+
+.dossier__frame {
+    position: relative;
+    aspect-ratio: 1.75 / 1;
+    width: 100%;
+    background: var(--ink-900);
+    padding: 10px;
+    border: 1px solid rgba(235, 228, 212, 0.08);
+    box-shadow:
+        0 28px 70px rgba(0, 0, 0, 0.55),
+        0 4px 14px rgba(0, 0, 0, 0.4),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.65);
+    transition: transform 0.6s var(--ease-out), box-shadow 0.6s var(--ease-out);
+}
+.dossier__frame:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 34px 80px rgba(0, 0, 0, 0.6),
+        0 6px 18px rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px rgba(217, 61, 46, 0.25);
+}
+
+.flag {
+    width: 100%;
+    height: 100%;
+    display: block;
+    filter: saturate(0.92) contrast(0.96) brightness(0.94);
+}
+
+/* Corner crosshairs */
+.crosshair {
+    position: absolute;
+    width: 14px; height: 14px;
+    pointer-events: none;
+}
+.crosshair::before, .crosshair::after {
+    content: '';
+    position: absolute;
+    background: var(--crimson);
+}
+.crosshair::before { width: 14px; height: 1.5px; }
+.crosshair::after  { width: 1.5px; height: 14px; }
+
+.crosshair--tl { top: -1px; inset-inline-start: -1px; }
+.crosshair--tl::before { top: 0; inset-inline-start: 0; }
+.crosshair--tl::after  { top: 0; inset-inline-start: 0; }
+
+.crosshair--tr { top: -1px; inset-inline-end: -1px; }
+.crosshair--tr::before { top: 0; inset-inline-end: 0; }
+.crosshair--tr::after  { top: 0; inset-inline-end: 0; }
+
+.crosshair--bl { bottom: -1px; inset-inline-start: -1px; }
+.crosshair--bl::before { bottom: 0; inset-inline-start: 0; }
+.crosshair--bl::after  { bottom: 0; inset-inline-start: 0; }
+
+.crosshair--br { bottom: -1px; inset-inline-end: -1px; }
+.crosshair--br::before { bottom: 0; inset-inline-end: 0; }
+.crosshair--br::after  { bottom: 0; inset-inline-end: 0; }
+
+/* Identity card */
+.dossier__card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 22px 22px;
+    background: linear-gradient(180deg, var(--ink-850) 0%, var(--ink-900) 100%);
+    border: 1px solid rgba(235, 228, 212, 0.06);
+    position: relative;
+}
+.dossier__card::before {
+    content: '';
+    position: absolute;
+    top: 0; inset-inline-start: 22px; inset-inline-end: 22px;
+    height: 2px;
+    background: var(--crimson);
+    opacity: 0.85;
+}
+
+.dossier__code {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    color: var(--crimson);
+    text-transform: uppercase;
+}
+
+.dossier__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--bone-100);
+    letter-spacing: -0.01em;
+}
+
+.dossier__subtitle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: var(--bone-400);
+    text-transform: uppercase;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed rgba(235, 228, 212, 0.1);
+}
+
+.dossier__data {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding-top: 6px;
+}
+.dossier__data > div { display: flex; flex-direction: column; gap: 3px; }
+.dossier__data dt {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--bone-500);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+.dossier__data dd {
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--bone-200);
+}
+
+/* ───────────────────────────────────────────────────────────
+   COUNTDOWN CORE
+   ─────────────────────────────────────────────────────────── */
+.core {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+    opacity: 0;
+    animation: fade-up 1.2s var(--ease-out) 0.6s forwards;
+    position: relative;
+}
+
+.core__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    color: var(--crimson);
+    text-transform: uppercase;
+}
+.core__eyebrow::before,
+.core__eyebrow::after {
+    content: '';
+    display: inline-block;
+    width: 28px; height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+}
+
+.core__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: -6px;
+}
+.core__title-hebrew {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(22px, 2.4vw, 36px);
+    color: var(--bone-100);
+    letter-spacing: -0.005em;
+    line-height: 1.15;
+}
+.core__title-latin {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: var(--bone-400);
+    text-transform: uppercase;
+}
+
+/* Digits */
+.countdown {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(12px, 2.2vw, 36px);
+    padding: 22px 0 10px;
+    direction: ltr;
+}
+.countdown::before {
+    content: '';
+    position: absolute;
+    inset: -15% -8%;
+    background: radial-gradient(ellipse at center, rgba(217, 61, 46, 0.10), transparent 65%);
+    filter: blur(28px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: clamp(70px, 10vw, 130px);
+}
+
+.unit__value {
+    font-family: var(--font-mono);
+    font-size: clamp(64px, 10vw, 140px);
+    font-weight: 300;
+    line-height: 0.92;
+    color: var(--bone-100);
+    letter-spacing: -0.035em;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 48px rgba(235, 228, 212, 0.08);
+    position: relative;
+}
+
+.unit--live .unit__value {
+    color: var(--crimson-bright);
+    text-shadow: 0 0 36px var(--crimson-glow);
+}
+
+.unit__label {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--bone-300);
+    letter-spacing: 0;
+    margin-top: 4px;
+}
+.unit__latin {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--bone-500);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+}
+
+.separator {
+    font-family: var(--font-mono);
+    font-weight: 200;
+    font-size: clamp(50px, 7vw, 100px);
+    color: var(--bone-500);
+    line-height: 0.85;
+    padding-top: 18px;
+    user-select: none;
+}
+.separator--blink {
+    color: var(--crimson);
+    animation: blink 1s steps(2, end) infinite;
+}
+@keyframes blink {
+    0%, 49%   { opacity: 1; }
+    50%, 100% { opacity: 0.25; }
+}
+
+/* Target chip */
+.core__target {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 22px;
+    border: 1px solid rgba(217, 61, 46, 0.32);
+    background: rgba(217, 61, 46, 0.045);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    direction: ltr;
+}
+.core__target-label {
+    color: var(--crimson);
+    font-weight: 600;
+}
+.core__target-value {
+    color: var(--bone-100);
+    font-weight: 500;
+}
+.core__target-arrow {
+    color: var(--crimson);
+    opacity: 0.6;
+}
+
+/* Progress strip */
+.core__progress {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 10px;
+}
+.core__progress-track {
+    position: relative;
+    height: 2px;
+    background: rgba(235, 228, 212, 0.1);
+}
+.core__progress-fill {
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, rgba(217, 61, 46, 0.3) 0%, var(--crimson) 50%, var(--crimson-bright) 100%);
+    transition: width 0.6s var(--ease-out);
+}
+.core__progress-cursor {
+    position: absolute;
+    top: 50%;
+    width: 11px; height: 11px;
+    background: var(--crimson-bright);
+    border: 2px solid var(--ink-950);
+    border-radius: 50%;
+    box-shadow: 0 0 14px var(--crimson-glow);
+    transform: translate(50%, -50%);
+    inset-inline-start: 0%;
+    transition: inset-inline-start 0.6s var(--ease-out);
+}
+.core__progress-cursor::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid var(--crimson);
+    opacity: 0.3;
+    animation: radar 2s ease-out infinite;
+}
+@keyframes radar {
+    0%   { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+.core__progress-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--bone-400);
+    text-transform: uppercase;
+}
+.core__progress-labels strong {
+    color: var(--bone-200);
+    font-weight: 500;
+}
+.core__progress-percent {
+    color: var(--crimson-bright);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ───────────────────────────────────────────────────────────
+   TELEMETRY FOOTER
+   ─────────────────────────────────────────────────────────── */
+.telemetry {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 18px 36px;
+    background: linear-gradient(0deg, rgba(10, 9, 8, 0.95), rgba(10, 9, 8, 0.55) 55%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(235, 228, 212, 0.05);
+    font-family: var(--font-mono);
+}
+.telemetry__col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 16px;
+    border-inline-start: 1px solid rgba(235, 228, 212, 0.06);
+}
+.telemetry__col:first-child { border-inline-start: none; }
+.telemetry__label {
+    font-size: 9px;
+    color: var(--bone-500);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+.telemetry__value {
+    font-size: 13px;
+    color: var(--bone-100);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+}
+.telemetry__value--crimson { color: var(--crimson-bright); }
+
+/* ───────────────────────────────────────────────────────────
+   ENTRANCE ANIMATIONS
+   ─────────────────────────────────────────────────────────── */
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ───────────────────────────────────────────────────────────
+   RESPONSIVE
+   ─────────────────────────────────────────────────────────── */
+@media (max-width: 1280px) {
+    .theater {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        max-width: 680px;
+    }
+    .dossier { max-width: 540px; margin: 0 auto; width: 100%; }
+    .dossier__frame { max-width: 520px; margin: 0 auto; width: 100%; }
+}
+
+@media (max-width: 780px) {
+    .stage { padding: 96px 18px 150px; }
+    .briefing-bar { padding: 12px 16px; font-size: 10px; gap: 12px; flex-wrap: wrap; }
+    .briefing-bar__section:nth-child(2) { display: none; }
+    .countdown { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .separator { display: none; }
+    .unit { min-width: 80px; }
+    .telemetry { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 14px 18px; }
+    .telemetry__col:nth-child(3) { border-inline-start: none; }
+    .edge-line--top    { top: 72px; }
+    .edge-line--bottom { bottom: 84px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background atmosphere -->
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-grain" aria-hidden="true"></div>
+<div class="bg-vignette" aria-hidden="true"></div>
+<div class="bg-scanline" aria-hidden="true"></div>
+<div class="edge-line edge-line--top" aria-hidden="true"></div>
+<div class="edge-line edge-line--bottom" aria-hidden="true"></div>
+
+<!-- Briefing bar -->
+<header class="briefing-bar">
+    <div class="briefing-bar__section">
+        <span class="tag-live">
+            <span class="tag-live__dot"></span>
+            LIVE
+        </span>
+        <span class="briefing-bar__meta">Eyes Only · Situation Brief</span>
+    </div>
+    <div class="briefing-bar__section">
+        <span class="briefing-bar__ref">δ-047 · US · ISR · IRN · Islamabad Accord · 08–22 APR 2026</span>
+    </div>
+    <div class="briefing-bar__section">
+        <span class="briefing-bar__clock" id="clock-local">— — — —</span>
+        <span class="briefing-bar__zone">JLM · UTC+3</span>
+    </div>
+</header>
+
+<!-- Main stage -->
+<main class="stage">
+
+    <section class="theater">
+
+        <!-- Iran dossier (renders on the right in RTL) -->
+        <article class="dossier dossier--iran" aria-label="Iran">
+            <div class="dossier__frame">
+                <svg class="flag flag--iran" viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Iran flag">
+                    <!-- Tricolor: green · white · red -->
+                    <rect x="0" y="0"      width="700" height="133.33" fill="#239f40"/>
+                    <rect x="0" y="133.33" width="700" height="133.34" fill="#ffffff"/>
+                    <rect x="0" y="266.67" width="700" height="133.33" fill="#da0000"/>
+
+                    <!-- Takbir · 11× along the bottom edge of the green stripe -->
+                    <text x="350" y="127"
+                          text-anchor="middle" textLength="660" lengthAdjust="spacingAndGlyphs"
+                          fill="#ffffff" font-size="15" font-weight="700"
+                          font-family="'Noto Naskh Arabic', 'Frank Ruhl Libre', serif"
+                          direction="rtl">الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر</text>
+
+                    <!-- Takbir · 11× along the top edge of the red stripe -->
+                    <text x="350" y="283"
+                          text-anchor="middle" textLength="660" lengthAdjust="spacingAndGlyphs"
+                          fill="#ffffff" font-size="15" font-weight="700"
+                          font-family="'Noto Naskh Arabic', 'Frank Ruhl Libre', serif"
+                          direction="rtl">الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر الله اكبر</text>
+
+                    <!-- National emblem · stylized "Allah" in the center of the white stripe -->
+                    <g fill="#da0000" transform="translate(350 200)">
+                        <!-- Tashdid (small decorative curl on top) -->
+                        <path d="M -4,-44 C -3,-48 3,-48 4,-44 L 3,-42 C 2,-45 -2,-45 -3,-42 Z"/>
+                        <!-- Horizontal crossbar -->
+                        <rect x="-20" y="-40" width="40" height="5"/>
+                        <!-- Central vertical sword / alif -->
+                        <path d="M -3,-35 L 3,-35 L 3,25 Q 3,32 0,34 Q -3,32 -3,25 Z"/>
+                        <!-- Inner left petal -->
+                        <path d="M -6,-30 Q -17,-26 -17,-5 Q -17,20 -5,30 Q -9,22 -10,5 Q -11,-16 -6,-30 Z"/>
+                        <!-- Inner right petal -->
+                        <path d="M  6,-30 Q  17,-26  17,-5 Q  17,20  5,30 Q  9,22  10,5 Q  11,-16  6,-30 Z"/>
+                        <!-- Outer left petal -->
+                        <path d="M -21,-20 Q -32,-12 -33,10 Q -31,28 -15,32 Q -20,25 -23,12 Q -26,-5 -21,-20 Z"/>
+                        <!-- Outer right petal -->
+                        <path d="M  21,-20 Q  32,-12  33,10 Q  31,28  15,32 Q  20,25  23,12 Q  26,-5  21,-20 Z"/>
+                    </g>
+                </svg>
+                <span class="crosshair crosshair--tl"></span>
+                <span class="crosshair crosshair--tr"></span>
+                <span class="crosshair crosshair--bl"></span>
+                <span class="crosshair crosshair--br"></span>
+            </div>
+            <div class="dossier__card">
+                <div class="dossier__code">IRN · IRI</div>
+                <div class="dossier__title">איראן</div>
+                <div class="dossier__subtitle">Islamic Republic of Iran</div>
+                <dl class="dossier__data">
+                    <div><dt>תפקיד</dt><dd>Signatory</dd></div>
+                    <div><dt>סטטוס</dt><dd>Active</dd></div>
+                    <div><dt>בירה</dt><dd>Tehran</dd></div>
+                </dl>
+            </div>
+        </article>
+
+        <!-- Countdown core -->
+        <section class="core" aria-label="ספירה לאחור">
+            <div class="core__eyebrow">
+                Briefing · ספירה לאחור מבצעית
+            </div>
+            <h1 class="core__title">
+                <span class="core__title-hebrew">ספירה לאחור עד פקיעת הפסקת האש</span>
+                <span class="core__title-latin">Ceasefire Expiration · T-Minus</span>
+            </h1>
+
+            <div class="countdown" id="countdown">
+                <div class="unit">
+                    <div class="unit__value" id="days">00</div>
+                    <div class="unit__label">ימים</div>
+                    <div class="unit__latin">Days</div>
+                </div>
+                <div class="separator">·</div>
+                <div class="unit">
+                    <div class="unit__value" id="hours">00</div>
+                    <div class="unit__label">שעות</div>
+                    <div class="unit__latin">Hours</div>
+                </div>
+                <div class="separator">·</div>
+                <div class="unit">
+                    <div class="unit__value" id="minutes">00</div>
+                    <div class="unit__label">דקות</div>
+                    <div class="unit__latin">Minutes</div>
+                </div>
+                <div class="separator separator--blink">:</div>
+                <div class="unit unit--live">
+                    <div class="unit__value" id="seconds">00</div>
+                    <div class="unit__label">שניות</div>
+                    <div class="unit__latin">Seconds</div>
+                </div>
+            </div>
+
+            <div class="core__target">
+                <span class="core__target-label">Zero Hour</span>
+                <span class="core__target-arrow">▸</span>
+                <span class="core__target-value">22 APR 2026 · 03:30:00 IDT</span>
+            </div>
+
+            <div class="core__progress">
+                <div class="core__progress-track">
+                    <div class="core__progress-fill" id="progress-fill"></div>
+                    <div class="core__progress-cursor" id="progress-cursor"></div>
+                </div>
+                <div class="core__progress-labels">
+                    <span><strong>כניסה לתוקף</strong> · 08.04.2026</span>
+                    <span class="core__progress-percent" id="progress-percent">0.00%</span>
+                    <span><strong>פקיעה</strong> · 22.04.2026</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- US dossier (renders on the left in RTL) -->
+        <article class="dossier dossier--us" aria-label="United States">
+            <div class="dossier__frame">
+                <svg class="flag flag--us" viewBox="0 0 1900 1000" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="US flag">
+                    <!-- Field -->
+                    <rect width="1900" height="1000" fill="#b22234"/>
+                    <!-- White stripes -->
+                    <g fill="#ffffff">
+                        <rect y="76.92"  width="1900" height="76.92"/>
+                        <rect y="230.77" width="1900" height="76.92"/>
+                        <rect y="384.62" width="1900" height="76.92"/>
+                        <rect y="538.46" width="1900" height="76.92"/>
+                        <rect y="692.31" width="1900" height="76.92"/>
+                        <rect y="846.15" width="1900" height="76.92"/>
+                    </g>
+                    <!-- Canton -->
+                    <rect width="760" height="538.46" fill="#3c3b6e"/>
+                    <!-- Stars (50, 9 rows of 6-5 alternating) -->
+                    <defs>
+                        <g id="us-star">
+                            <path d="M 0,-16 L 3.76,-4.94 L 15.22,-4.94 L 5.94,1.88 L 9.41,12.94 L 0,6.12 L -9.41,12.94 L -5.94,1.88 L -15.22,-4.94 L -3.76,-4.94 Z" fill="#ffffff"/>
+                        </g>
+                    </defs>
+                    <!-- Row 0 (6 stars) y=54 -->
+                    <use href="#us-star" x="63"  y="54"/>
+                    <use href="#us-star" x="190" y="54"/>
+                    <use href="#us-star" x="317" y="54"/>
+                    <use href="#us-star" x="443" y="54"/>
+                    <use href="#us-star" x="570" y="54"/>
+                    <use href="#us-star" x="697" y="54"/>
+                    <!-- Row 1 (5 stars) y=108 -->
+                    <use href="#us-star" x="127" y="108"/>
+                    <use href="#us-star" x="253" y="108"/>
+                    <use href="#us-star" x="380" y="108"/>
+                    <use href="#us-star" x="507" y="108"/>
+                    <use href="#us-star" x="633" y="108"/>
+                    <!-- Row 2 (6) y=162 -->
+                    <use href="#us-star" x="63"  y="162"/>
+                    <use href="#us-star" x="190" y="162"/>
+                    <use href="#us-star" x="317" y="162"/>
+                    <use href="#us-star" x="443" y="162"/>
+                    <use href="#us-star" x="570" y="162"/>
+                    <use href="#us-star" x="697" y="162"/>
+                    <!-- Row 3 (5) y=215 -->
+                    <use href="#us-star" x="127" y="215"/>
+                    <use href="#us-star" x="253" y="215"/>
+                    <use href="#us-star" x="380" y="215"/>
+                    <use href="#us-star" x="507" y="215"/>
+                    <use href="#us-star" x="633" y="215"/>
+                    <!-- Row 4 (6) y=269 -->
+                    <use href="#us-star" x="63"  y="269"/>
+                    <use href="#us-star" x="190" y="269"/>
+                    <use href="#us-star" x="317" y="269"/>
+                    <use href="#us-star" x="443" y="269"/>
+                    <use href="#us-star" x="570" y="269"/>
+                    <use href="#us-star" x="697" y="269"/>
+                    <!-- Row 5 (5) y=323 -->
+                    <use href="#us-star" x="127" y="323"/>
+                    <use href="#us-star" x="253" y="323"/>
+                    <use href="#us-star" x="380" y="323"/>
+                    <use href="#us-star" x="507" y="323"/>
+                    <use href="#us-star" x="633" y="323"/>
+                    <!-- Row 6 (6) y=377 -->
+                    <use href="#us-star" x="63"  y="377"/>
+                    <use href="#us-star" x="190" y="377"/>
+                    <use href="#us-star" x="317" y="377"/>
+                    <use href="#us-star" x="443" y="377"/>
+                    <use href="#us-star" x="570" y="377"/>
+                    <use href="#us-star" x="697" y="377"/>
+                    <!-- Row 7 (5) y=431 -->
+                    <use href="#us-star" x="127" y="431"/>
+                    <use href="#us-star" x="253" y="431"/>
+                    <use href="#us-star" x="380" y="431"/>
+                    <use href="#us-star" x="507" y="431"/>
+                    <use href="#us-star" x="633" y="431"/>
+                    <!-- Row 8 (6) y=485 -->
+                    <use href="#us-star" x="63"  y="485"/>
+                    <use href="#us-star" x="190" y="485"/>
+                    <use href="#us-star" x="317" y="485"/>
+                    <use href="#us-star" x="443" y="485"/>
+                    <use href="#us-star" x="570" y="485"/>
+                    <use href="#us-star" x="697" y="485"/>
+                </svg>
+                <span class="crosshair crosshair--tl"></span>
+                <span class="crosshair crosshair--tr"></span>
+                <span class="crosshair crosshair--bl"></span>
+                <span class="crosshair crosshair--br"></span>
+            </div>
+            <div class="dossier__card">
+                <div class="dossier__code">USA · CENTCOM</div>
+                <div class="dossier__title">ארצות הברית</div>
+                <div class="dossier__subtitle">United States of America</div>
+                <dl class="dossier__data">
+                    <div><dt>תפקיד</dt><dd>Signatory</dd></div>
+                    <div><dt>סטטוס</dt><dd>Active</dd></div>
+                    <div><dt>בירה</dt><dd>Washington</dd></div>
+                </dl>
+            </div>
+        </article>
+
+    </section>
+</main>
+
+<!-- Telemetry footer -->
+<footer class="telemetry">
+    <div class="telemetry__col">
+        <span class="telemetry__label">Local · Jerusalem</span>
+        <span class="telemetry__value" id="tel-local">— — — —</span>
+    </div>
+    <div class="telemetry__col">
+        <span class="telemetry__label">Coordinated Universal</span>
+        <span class="telemetry__value" id="tel-utc">— — — —</span>
+    </div>
+    <div class="telemetry__col">
+        <span class="telemetry__label">Ceasefire Duration</span>
+        <span class="telemetry__value">14 days · Islamabad Accord</span>
+    </div>
+    <div class="telemetry__col">
+        <span class="telemetry__label">Seconds to Zero</span>
+        <span class="telemetry__value telemetry__value--crimson" id="tel-seconds-total">—</span>
+    </div>
+</footer>
+
+<script>
+(function(){
+    // Anchors
+    const TARGET = new Date("2026-04-22T03:30:00+03:00").getTime();
+    const START  = new Date("2026-04-08T03:30:00+03:00").getTime();
+
+    // Refs
+    const $ = (id) => document.getElementById(id);
+    const daysEl   = $('days');
+    const hoursEl  = $('hours');
+    const minsEl   = $('minutes');
+    const secsEl   = $('seconds');
+    const fillEl   = $('progress-fill');
+    const cursorEl = $('progress-cursor');
+    const pctEl    = $('progress-percent');
+    const clockEl  = $('clock-local');
+    const telLocal = $('tel-local');
+    const telUtc   = $('tel-utc');
+    const telTotal = $('tel-seconds-total');
+
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const formatLocal = (d) => {
+        const opts = {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false, timeZone: 'Asia/Jerusalem'
+        };
+        const parts = new Intl.DateTimeFormat('en-GB', opts).formatToParts(d);
+        const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+        return `${p.day}.${p.month}.${p.year} · ${p.hour}:${p.minute}:${p.second}`;
+    };
+
+    const formatUTC = (d) => {
+        const iso = d.toISOString(); // e.g. 2026-04-21T10:05:33.123Z
+        const [date, rest] = iso.split('T');
+        const [time] = rest.split('.');
+        return `${date.replace(/-/g,'.')} · ${time} UTC`;
+    };
+
+    const toExpired = () => {
+        document.querySelector('.core__title-hebrew').textContent = 'הפסקת האש פגה';
+        document.querySelector('.core__title-latin').textContent = 'Ceasefire Expired · Zero Hour Reached';
+        const eyebrow = document.querySelector('.core__eyebrow');
+        eyebrow.textContent = 'EXPIRED · ZERO HOUR REACHED';
+        daysEl.textContent = hoursEl.textContent = minsEl.textContent = secsEl.textContent = '00';
+        fillEl.style.width = '100%';
+        cursorEl.style.insetInlineStart = '100%';
+        pctEl.textContent = '100.00%';
+        telTotal.textContent = '0';
+    };
+
+    function tick() {
+        const now = Date.now();
+        const diff = TARGET - now;
+
+        if (diff <= 0) { toExpired(); return; }
+
+        const days = Math.floor(diff / 86400000);
+        const hrs  = Math.floor((diff / 3600000) % 24);
+        const min  = Math.floor((diff / 60000) % 60);
+        const sec  = Math.floor((diff / 1000) % 60);
+
+        daysEl.textContent = pad(days);
+        hoursEl.textContent = pad(hrs);
+        minsEl.textContent  = pad(min);
+        secsEl.textContent  = pad(sec);
+
+        // Progress
+        const total = TARGET - START;
+        const elapsed = Math.max(0, now - START);
+        const pct = Math.min(100, (elapsed / total) * 100);
+        fillEl.style.width = pct + '%';
+        cursorEl.style.insetInlineStart = pct + '%';
+        pctEl.textContent = pct.toFixed(2) + '%';
+
+        // Clocks
+        const nowD = new Date();
+        const localStr = formatLocal(nowD);
+        clockEl.textContent = localStr;
+        telLocal.textContent = localStr;
+        telUtc.textContent = formatUTC(nowD);
+        telTotal.textContent = Math.floor(diff / 1000).toLocaleString('en-US');
+    }
+
+    tick();
+    setInterval(tick, 1000);
+})();
+</script>
+
+</body>
+</html>
